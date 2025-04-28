@@ -1,6 +1,6 @@
 import React from 'react';
 import { ThemeProvider, CssBaseline, Box, Typography } from '@mui/material';
-import BillGenerator from './Components/BillGenerator';
+import BillGenerator from './Components/BillGenerator/index';
 import theme from './Lib/Theme/theme.ts';
 
 
