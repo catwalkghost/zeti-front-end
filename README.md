@@ -5,12 +5,17 @@ A React application that calculates and displays a bill for Bob's Taxis based on
 ## Screenshots
 
 ### Desktop View
-![Desktop view of the bill application](docs/screenshots/desktop-view.png)
-![Another desktop view of the bill application](docs/screenshots/desktop-view-2.png)
+![Desktop view of the application](https://github.com/user-attachments/assets/20b18d6f-b4b3-4919-8da6-b22799b53607)
+
+### Tablet view
+
+![Tablet view of the application](https://github.com/user-attachments/assets/ca3c30a9-ccae-479c-a78d-1575ef04404d)
 
 ### Mobile View
-![Mobile view of the bill summary](docs/screenshots/mobile-view-1.png)
-![Mobile view of vehicle details](docs/screenshots/mobile-view-2.png)
+
+![Mobile view of the application](https://github.com/user-attachments/assets/28439a52-b268-4701-8ff7-761ebe37262c)
+![Mobile view of the application](https://github.com/user-attachments/assets/79706bb3-3a86-4fea-bc5c-58a49acf4da8)
+
 
 ## Requirements
 
