@@ -12,79 +12,61 @@ import {
 } from '@mui/material';
 import AltRouteRounded from '@mui/icons-material/AltRouteRounded';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import { VehicleAPI } from '../../API/Vehicle.ts';
-import { BillingCalculator } from '../../utils/BillingCalculator.ts';
-import { BillFormat, BillFormatter } from '../../utils/BillFormatter.ts';
+import { VehicleAPI } from '../../Lib/API/Vehicle';
+import { BillingCalculator } from '../../Lib/Utils/BillingCalculator';
+import { BillFormat, BillFormatter } from '../../Lib/Utils/BillFormatter';
 import dayjs from 'dayjs';
-// Date picker imports are commented out since I am using fixed timestamps
-// In a real-world project, these would be used for dynamic date selection
+// Removed these for now - these are needed for Date Picker implemntation
 // import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 // import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 // import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { Bill } from '../../Types';
-import BillSummary from '../BillSummary.tsx';
+import Index from '../BillSummary';
 import VehicleList from '../VehicleList';
-import { COLORS, LAYOUT } from '../../theme.ts';
+import { COLORS, LAYOUT } from '../../Lib/Theme/theme';
 import { BILLING_PERIOD_START, BILLING_PERIOD_END, COMPANY_NAME } from '../../Constants';
-import BillGeneratorHeader from './BillGeneratorHeader.tsx';
-import BillingInformation from './BillingInformation.tsx';
+import BillGeneratorHeader from './BillGeneratorHeader';
+import BillingInformation from './BillingInformation';
 
 type BillGeneratorProps = {
   startDate?: string;
   endDate?: string;
 };
 
-/**
- * Format date for display in the billing period
- */
 const formatDisplayDate = (dateString: string): string => {
   return dayjs(dateString).format('DD/MM/YYYY');
 };
 
-/**
- * Format date with time for display
- */
 const formatDisplayDateTime = (dateString: string): string => {
   return dayjs(dateString).format('DD/MM/YYYY HH:mm');
 };
 
-/**
- * Calculate total miles for all vehicles
- */
 const calculateTotalMiles = (bill: Bill): number => {
   return bill.vehicles.reduce((total, vehicle) => 
     total + (vehicle.endMileage - vehicle.startMileage), 0);
 };
 
-/**
- * Vehicle Usage Bill component with elegant, luxury design
- */
 const BillGenerator: React.FC<BillGeneratorProps> = () => {
   const theme = useTheme();
   
-  // State for bill data and UI
   const [bill, setBill] = useState<Bill | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [downloadFormat, setDownloadFormat] = useState<BillFormat>(BillFormat.PDF);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
-  // Using fixed date range from the requirements
   const [dateRange] = useState({ startDate: BILLING_PERIOD_START, endDate: BILLING_PERIOD_END });
   const [customerName] = useState<string>(COMPANY_NAME);
   
-  /**
-   * Generate bill from vehicle data
-   */
   const generateBill = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     
     try {
-      // Fetch vehicle data for the start and end dates
+      // Get the vehicle data for start and end of the month
       const startVehicles = await VehicleAPI.getVehiclesHistory(dateRange.startDate);
       const endVehicles = await VehicleAPI.getVehiclesHistory(dateRange.endDate);
       
-      // Generate a bill specifically for Bob's Taxis
+      // Calculate the bill for Bob's Taxis
       const generatedBill = BillingCalculator.generateBill(
         startVehicles,
         endVehicles,
@@ -92,32 +74,32 @@ const BillGenerator: React.FC<BillGeneratorProps> = () => {
         dateRange.endDate
       );
       
-      // Update state
       setBill(generatedBill);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
-      setError(`Failed to fetch vehicle data: ${errorMessage}. Please check your network connection and ensure the API is accessible.`);
-      console.error("Error generating bill:", err);
+      setError(`Failed to generate bill: ${errorMessage}`);
+      console.error("Something went wrong:", err);
     } finally {
       setIsLoading(false);
     }
   }, [dateRange.startDate, dateRange.endDate]);
 
-  // Generate bill on component mount
   useEffect(() => {
-    generateBill();
+    // Using IIFE
+    (async () => {
+      try {
+        await generateBill();
+      } catch (error) {
+        console.error("Something went wrong:", error);
+      }
+    })();
+    // No need to return anything from useEffect
   }, [generateBill]);
 
-  /**
-   * Handle format selection change for downloads
-   */
   const handleFormatChange = (format: BillFormat) => {
     setDownloadFormat(format);
   };
 
-  /**
-   * Download bill in selected format
-   */
   const downloadBill = async () => {
     if (!bill) return;
     
@@ -125,13 +107,10 @@ const BillGenerator: React.FC<BillGeneratorProps> = () => {
       setIsDownloading(true);
       setError(null);
       
-      // Get file info for the selected format
       const { extension, mimeType } = BillFormatter.getFileInfo(downloadFormat);
-      
-      // Format bill in the selected format
       const formattedContent = await BillFormatter.formatBill(bill, downloadFormat);
       
-      // PDF format handler
+      // PDF is special — it's already a data URL
       if (downloadFormat === BillFormat.PDF) {
         const a = document.createElement('a');
         a.href = formattedContent;
@@ -140,7 +119,7 @@ const BillGenerator: React.FC<BillGeneratorProps> = () => {
         a.click();
         document.body.removeChild(a);
       } else {
-        // blob is used for other formats
+        // Other formats need to be converted to blobs
         const blob = new Blob([formattedContent], { type: mimeType });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -148,14 +127,14 @@ const BillGenerator: React.FC<BillGeneratorProps> = () => {
         a.download = `bobs_taxis_bill_${dateRange.startDate.split('T')[0]}_to_${dateRange.endDate.split('T')[0]}.${extension}`;
         document.body.appendChild(a);
         a.click();
-
+        
         setTimeout(() => {
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
         }, 100);
       }
     } catch (err) {
-      setError(`Failed to download bill: ${err instanceof Error ? err.message : String(err)}`);
+      setError(`Download failed: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setIsDownloading(false);
     }
@@ -185,7 +164,6 @@ const BillGenerator: React.FC<BillGeneratorProps> = () => {
             background: COLORS.cardBackground,
           }}
         >
-          {/* Header Section */}
           <BillGeneratorHeader 
             dateRange={dateRange}
             downloadFormat={downloadFormat}
@@ -236,7 +214,10 @@ const BillGenerator: React.FC<BillGeneratorProps> = () => {
               >
                 Error
               </Typography>
-              <Typography variant="body1" sx={{ color: '#7F1D1D', mb: 3 }}>
+              <Typography 
+                variant="body1" 
+                sx={{ color: COLORS.errorText, mb: 3 }}
+              >
                 {error}
               </Typography>
               
@@ -251,8 +232,7 @@ const BillGenerator: React.FC<BillGeneratorProps> = () => {
             </Paper>
           ) : bill ? (
             <React.Fragment>
-              {/* Summary Section */}
-              <BillSummary 
+              <Index
                 billingPeriodStart={bill.billingPeriodStart}
                 billingPeriodEnd={bill.billingPeriodEnd}
                 totalMiles={calculateTotalMiles(bill)}
@@ -261,11 +241,9 @@ const BillGenerator: React.FC<BillGeneratorProps> = () => {
                 vehicleCount={bill.vehicles.length}
               />
 
-              {/* Divider with sufficient margin */}
               <Divider sx={{ my: LAYOUT.spacing.sm, borderColor: theme.palette.divider }}/>
 
-              {/* Vehicle Details */}
-              <VehicleList 
+              <VehicleList
                 vehicles={bill.vehicles.map(vehicle => ({
                   licensePlate: vehicle.registration || '',
                   vin: vehicle.vin || '',
@@ -283,8 +261,7 @@ const BillGenerator: React.FC<BillGeneratorProps> = () => {
                 totalCost={bill.totalCost}
               />
 
-              {/* Billing Information */}
-              <BillingInformation 
+              <BillingInformation
                 generatedAt={bill.generatedAt}
                 customerName={customerName}
                 formatDisplayDateTime={formatDisplayDateTime}

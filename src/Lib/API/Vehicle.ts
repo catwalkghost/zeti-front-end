@@ -1,6 +1,6 @@
-import { Vehicle, VehicleWithState } from "../Types";
+import { Vehicle, VehicleWithState } from "../../Types";
 import { debounce } from "lodash-es";
-import { API_BASE_URL, API_VEHICLES_ENDPOINT, API_VEHICLES_HISTORY_ENDPOINT, CORS_PROXY, BOBS_TAXIS_LICENSE_PLATES } from "../Constants";
+import { API_BASE_URL, API_VEHICLES_ENDPOINT, API_VEHICLES_HISTORY_ENDPOINT, CORS_PROXY, BOBS_TAXIS_LICENSE_PLATES } from "../../Constants";
 
 /**
  * API service for fetching vehicle data
@@ -24,7 +24,11 @@ export class VehicleAPI {
     try {
       const apiUrl = `${API_BASE_URL}${API_VEHICLES_ENDPOINT}`;
       const url = `${CORS_PROXY}${encodeURIComponent(apiUrl)}`;
-      console.log('Fetching vehicles from:', apiUrl, '(via CORS proxy)');
+      
+      // In development, we might want to log the URL for debugging
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Fetching vehicles via CORS proxy');
+      }
       
       const response = await fetch(url, {
         method: 'GET',
@@ -33,14 +37,11 @@ export class VehicleAPI {
         }
       });
       
-      console.log('Response status:', response.status);
-      
       if (!response.ok) {
         throw new Error(`API error (${response.status})`);
       }
       
       const allVehicles = await response.json() as Vehicle[];
-      console.log('Fetched vehicles:', allVehicles);
       
       // Filter for Bob's Taxis vehicles
       const bobsTaxisVehicles = allVehicles.filter(vehicle => 
@@ -75,7 +76,6 @@ export class VehicleAPI {
       const encodedDateTime = encodeURIComponent(asAtDateTime);
       const apiUrl = `${API_BASE_URL}${API_VEHICLES_HISTORY_ENDPOINT}/${encodedDateTime}`;
       const url = `${CORS_PROXY}${encodeURIComponent(apiUrl)}`;
-      console.log('Fetching vehicle history from:', apiUrl, '(via CORS proxy)');
       
       const response = await fetch(url, {
         method: 'GET',
@@ -84,14 +84,11 @@ export class VehicleAPI {
         }
       });
       
-      console.log('Response status:', response.status);
-      
       if (!response.ok) {
         throw new Error(`API error (${response.status})`);
       }
       
       const allVehicles = await response.json() as VehicleWithState[];
-      console.log('Fetched vehicle history:', allVehicles);
       
       // Filter for Bob's Taxis vehicles
       const bobsTaxisVehicles = allVehicles.filter(vehicle => 
@@ -118,10 +115,7 @@ export class VehicleAPI {
     );
   }
 
-  /**
-   * Debounced versions of API calls to prevent excessive requests
-   * These methods implement a 500ms delay for multiple consecutive calls
-   */
+  // Debounced API calls to prevent excessive requests (500ms delay)
   public static debouncedGetVehicles = debounce(VehicleAPI.getVehicles, 500);
   public static debouncedGetVehiclesHistory = debounce(VehicleAPI.getVehiclesHistory, 500);
   public static debouncedGetBobsTaxisVehicles = debounce(VehicleAPI.getBobsTaxisVehicles, 500);

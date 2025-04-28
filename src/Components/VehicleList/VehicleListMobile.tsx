@@ -33,12 +33,7 @@ const VehicleCard = styled(Card)(({ theme }) => ({
   marginBottom: '1.5rem',
   border: `1px solid ${theme.palette.divider}`,
   borderRadius: '8px',
-  transition: 'transform 0.2s, box-shadow 0.2s',
-  overflow: 'hidden',
-  '&:hover': {
-    transform: 'translateY(-2px)',
-    boxShadow: '0 6px 20px rgba(0,0,0,0.05)'
-  }
+  overflow: 'hidden'
 }));
 
 const VehicleListMobile: React.FC<VehicleListMobileProps> = ({
@@ -120,7 +115,6 @@ const VehicleListMobile: React.FC<VehicleListMobileProps> = ({
           </VehicleCard>
         ))}
 
-        {/* Total card for mobile */}
         <Card
           elevation={0}
           sx={{

@@ -1,13 +1,14 @@
 import React from 'react';
 import { ThemeProvider, CssBaseline, Box, Typography } from '@mui/material';
 import BillGenerator from './Components/BillGenerator';
-import theme from './theme';
+import theme from './Lib/Theme/theme.ts';
 
 
 const App: React.FC = () => {
-  // Date range for the billing period
-  // This is hardcoded due to the task requirements
-  // For production a date-time selector should be used
+  /** Date range for the billing period
+  * This is hardcoded due to the task requirements
+  * For production a date-time selector should be used
+   **/
   const startDate = '2021-02-01T00:00:00Z';
   const endDate = '2021-02-28T23:59:00Z';
   

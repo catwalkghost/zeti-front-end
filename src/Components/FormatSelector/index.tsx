@@ -5,10 +5,9 @@ import {
   Select, 
   MenuItem, 
   SelectChangeEvent,
-  SxProps,
-  Theme
+  Box
 } from '@mui/material';
-import { BillFormat } from '../utils/BillFormatter';
+import { BillFormat } from '../../Lib/Utils/BillFormatter';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import TableRowsIcon from '@mui/icons-material/TableRows';
 import GridOnIcon from '@mui/icons-material/GridOn';
@@ -16,21 +15,21 @@ import CodeIcon from '@mui/icons-material/Code';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import DataObjectIcon from '@mui/icons-material/DataObject';
 
-type FormatSelectorProps = {
+// Define props directly to ensure proper typing
+interface FormatSelectorProps {
   value: BillFormat;
-  onChange: (value: BillFormat) => void;
+  onChange: (format: BillFormat) => void;
   disabled?: boolean;
-  sx?: SxProps<Theme>;
-};
+  sx?: any;
+}
 
-const FormatSelector: React.FC<FormatSelectorProps> = ({ 
-  value, 
-  onChange, 
-  disabled = false,
-  sx
-}) => {
+// Dropdown to pick the bill format for download
+const FormatSelector: React.FC<FormatSelectorProps> = ({ value, onChange, disabled = false, sx }) => {
+  // Handle dropdown change
   const handleChange = (event: SelectChangeEvent) => {
-    onChange(event.target.value as BillFormat);
+    // Ensure value is explicitly cast to BillFormat
+    const formatValue = event.target.value as BillFormat;
+    onChange(formatValue);
   };
 
   return (
@@ -47,29 +46,42 @@ const FormatSelector: React.FC<FormatSelectorProps> = ({
         value={value}
         label="Format"
         onChange={handleChange}
+        sx={{ height: '44px' }}
       >
         <MenuItem value={BillFormat.PDF}>
-          <PictureAsPdfIcon fontSize="small" sx={{ mr: 1 }} />
+          <Box sx={{ display: 'inline-flex', alignItems: 'center', mr: 1 }}>
+            <PictureAsPdfIcon fontSize="small" />
+          </Box>
           PDF
         </MenuItem>
         <MenuItem value={BillFormat.CSV}>
-          <TableRowsIcon fontSize="small" sx={{ mr: 1 }} />
+          <Box sx={{ display: 'inline-flex', alignItems: 'center', mr: 1 }}>
+            <TableRowsIcon fontSize="small" />
+          </Box>
           CSV
         </MenuItem>
         <MenuItem value={BillFormat.JSON}>
-          <CodeIcon fontSize="small" sx={{ mr: 1 }} />
+          <Box sx={{ display: 'inline-flex', alignItems: 'center', mr: 1 }}>
+            <CodeIcon fontSize="small" />
+          </Box>
           JSON
         </MenuItem>
         <MenuItem value={BillFormat.HTML}>
-          <GridOnIcon fontSize="small" sx={{ mr: 1 }} />
+          <Box sx={{ display: 'inline-flex', alignItems: 'center', mr: 1 }}>
+            <GridOnIcon fontSize="small" />
+          </Box>
           HTML
         </MenuItem>
         <MenuItem value={BillFormat.XML}>
-          <DataObjectIcon fontSize="small" sx={{ mr: 1 }} />
+          <Box sx={{ display: 'inline-flex', alignItems: 'center', mr: 1 }}>
+            <DataObjectIcon fontSize="small" />
+          </Box>
           XML
         </MenuItem>
         <MenuItem value={BillFormat.TEXT}>
-          <TextSnippetIcon fontSize="small" sx={{ mr: 1 }} />
+          <Box sx={{ display: 'inline-flex', alignItems: 'center', mr: 1 }}>
+            <TextSnippetIcon fontSize="small" />
+          </Box>
           Text
         </MenuItem>
       </Select>

@@ -62,6 +62,12 @@ This application fetches data from the Azure-hosted API at `https://funczetiinte
 * The proxy adds the necessary CORS headers to the responses
 * This allows the browser to accept the cross-origin responses
 
+### Why CORS is Necessary
+
+CORS (Cross-Origin Resource Sharing) is a security feature implemented by web browsers that restricts web pages from making requests to a different domain than the one that served the original page. This security mechanism helps prevent malicious websites from accessing sensitive data from other websites.
+
+Without proper CORS headers, the browser blocks JavaScript from accessing responses to cross-origin HTTP requests. Since our front-end application is hosted on a different domain than the API server, CORS headers are required to allow this communication. The proxy approach used in this application provides a workaround when we don't have control over the API server's CORS configuration.
+
 This approach enables direct API access without requiring backend changes.
 
 ## Usage
@@ -75,35 +81,6 @@ Users can download the bill in several formats using the format selector dropdow
 * HTML
 * XML
 * Plain Text
-
-## Application Structure
-
-```
-src/
-├── API/                    # API services for data fetching
-│   ├── Bill.ts             # Bill API methods
-│   └── Vehicle.ts          # Vehicle API methods with Bob's Taxis filtering
-├── Components/             # React components
-│   ├── BillGenerator/      # Bill generator component and its parts
-│   │   ├── BillGeneratorHeader.tsx    # Header section with format selector
-│   │   ├── BillingInformation.tsx     # Footer section with metadata
-│   │   └── index.tsx                  # Main bill generator component
-│   ├── BillSummary.tsx     # Bill summary component
-│   ├── FormatSelector.tsx  # Format selection dropdown
-│   └── VehicleList/        # Vehicle list components for different views
-│       ├── VehicleListMobile.tsx      # Mobile view with cards
-│       ├── VehicleListTablet.tsx      # Tablet view with optimized table
-│       └── index.tsx                  # Main responsive vehicle list
-├── utils/                  # Utility functions
-│   ├── BillingCalculator.ts # Calculates the bill based on vehicle data
-│   └── BillFormatter.ts     # Formats the bill in different output formats
-├── Types/                  # Type definitions
-│   └── index.ts            
-├── Constants/              # Application constants
-├── theme.ts               # MUI theme configuration
-├── App.tsx                # Main application component
-└── main.tsx               # Application entry point
-```
 
 ## Performance Optimization
 
@@ -135,10 +112,11 @@ This application uses several performance optimization techniques:
 * Material UI theming is used for consistent styling
 * Type definitions use the `type` keyword rather than `interface` when possible
 * API code is separated from UI code for better maintainability
+* FormatSelector component uses strictly typed BillFormat enum to ensure type safety when selecting bill formats
 
-## Tests
+## Testing
 
-Run tests with:
+This project uses Vitest as the test runner with React Testing Library for component testing. To run tests:
 
 ```bash
 # Using yarn (preferred)
@@ -147,6 +125,48 @@ yarn test
 # Using npm (alternative)
 npm test
 ```
+
+### Testing Approach
+
+The testing strategy follows these principles:
+
+1. **Component Testing**: Each component is tested in isolation to ensure it renders correctly and functions as expected.
+
+2. **Unit Testing**: Utility functions, particularly the BillFormatter, are tested to verify correct output formats.
+
+3. **Integration Testing**: Where appropriate, components are tested with their child components to ensure proper integration.
+
+4. **Behavior Testing**: Tests focus on user behavior rather than implementation details, making tests more resilient to refactoring.
+
+### Testing Tools
+
+* **Vitest**: Modern, fast test runner compatible with the Vite build system
+* **React Testing Library**: Encourages testing components as users would interact with them
+* **jsdom**: Provides a simulated DOM environment for tests
+* **Testing-Library Matchers**: Used for common assertions like element presence
+
+### Test Structure
+
+Tests are organized in the `src/tests` directory, with test files named after the component or utility they test (e.g., `VehicleList.test.tsx`). Each test file contains multiple test cases grouped using `describe` blocks.
+
+### Testing Best Practices
+
+1. **Accessibility-First Testing**: Tests should help ensure the application is accessible to all users.
+
+2. **Test User Behavior**: Tests should focus on what users do, not implementation details.
+
+3. **Mock External Dependencies**: API calls are mocked to make tests deterministic and fast.
+
+4. **Descriptive Test Names**: Test names should clearly describe the expected behavior being tested.
+
+5. **DRY Test Code**: Helper functions are used to reduce repetition in tests.
+
+### Test Coverage Improvements Needed
+
+* Add tests for API service modules
+* Add more integration tests for combined component behavior
+* Implement end-to-end tests for critical user flows
+* Add snapshot tests for components with complex UI
 
 ## Design Considerations
 
@@ -175,3 +195,17 @@ npm test
 * CORS issues when accessing the API from local development environment
 * Vehicles that don't belong to Bob's Taxis
 * Multiple vehicles with the same license plate but different VINs
+
+## Recent Changes
+
+* Fixed type compatibility issue between BillGeneratorHeader and FormatSelector components by updating FormatSelectorProps to use the BillFormat enum instead of string
+* Improved type safety throughout the application by using strict type checking
+* Updated file structure to follow a more modular organization with components under dedicated directories
+* Fixed and improved test structure using Vitest
+
+## Things to Improve
+
+* Test coverage might be more comprehensive
+* Excessive reliance on the `sx` prop. This can be solved by a more comprehensive theme override
+* Date picker needs to be introduced for a real-world use case. For test purposes, I am using hardcoded values
+* The UI might require more iterations and might benefit from custom images and icons

@@ -10,7 +10,7 @@ import PaidRoundedIcon from '@mui/icons-material/PaidRounded';
 import AltRouteRoundedIcon from '@mui/icons-material/AltRouteRounded';
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import { COLORS } from '../theme';
+import { COLORS } from '../../Lib/Theme/theme.ts';
 
 type BillSummaryProps = {
   billingPeriodStart: string;
@@ -96,9 +96,7 @@ const ResponsiveBox = styled(Box)(({ theme }) => ({
   }
 }));
 
-/**
- * BillSummary component to display bill summary information
- */
+
 const BillSummary: React.FC<BillSummaryProps> = ({
   billingPeriodStart,
   billingPeriodEnd,
@@ -109,7 +107,6 @@ const BillSummary: React.FC<BillSummaryProps> = ({
 }) => {
   const theme = useTheme();
 
-  // Format functions
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -181,4 +178,4 @@ const BillSummary: React.FC<BillSummaryProps> = ({
   );
 };
 
-export default BillSummary; 
+export default BillSummary;

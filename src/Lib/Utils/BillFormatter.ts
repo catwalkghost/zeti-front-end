@@ -1,8 +1,8 @@
-import { Bill } from "../Types";
+import { Bill } from "../../Types";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
 import dayjs from 'dayjs';
-import { FILE_FORMATS } from "../Constants";
+import { FILE_FORMATS } from "../../Constants";
 
 // This component has written with the help from the AI due to time constraints
 // This can be reviewed and optimised manually

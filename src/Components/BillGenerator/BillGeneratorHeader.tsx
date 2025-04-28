@@ -7,9 +7,9 @@ import {
   useTheme,
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
-import { BillFormat } from '../../utils/BillFormatter.ts';
-import FormatSelector from '../FormatSelector.tsx';
-import { COLORS, LAYOUT } from '../../theme.ts';
+import { BillFormat } from '../../Lib/Utils/BillFormatter';
+import FormatSelector from '../FormatSelector';
+import { COLORS, LAYOUT } from '../../Lib/Theme/theme';
 
 type BillGeneratorHeaderProps = {
   dateRange: {
@@ -35,6 +35,10 @@ const BillGeneratorHeader: React.FC<BillGeneratorHeaderProps> = ({
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const handleFormatChange = (format: BillFormat) => {
+    onFormatChange(format);
+  };
 
   return (
     <Box sx={{ mb: LAYOUT.spacing.sm }}>
@@ -74,7 +78,7 @@ const BillGeneratorHeader: React.FC<BillGeneratorHeaderProps> = ({
         }}>
           <FormatSelector
             value={downloadFormat}
-            onChange={onFormatChange}
+            onChange={handleFormatChange}
             disabled={!billExists || isDownloading}
             sx={{
               width: isMobile ? '100%' : 'auto'

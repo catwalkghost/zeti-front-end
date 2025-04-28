@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Theme } from '@mui/material';
-import { LAYOUT } from '../../theme.ts';
+import { LAYOUT } from '../../Lib/Theme/theme.ts';
 
 type BillingInformationProps = {
   generatedAt: string;
@@ -9,10 +9,6 @@ type BillingInformationProps = {
   theme: Theme;
 };
 
-/**
- * Component to display billing information footer
- * Includes generation date and customer name
- */
 const BillingInformation: React.FC<BillingInformationProps> = ({
   generatedAt,
   customerName,

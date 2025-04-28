@@ -15,7 +15,7 @@ import {
   styled
 } from '@mui/material';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
-import { COLORS } from '../../theme.ts';
+import { COLORS } from '../../Lib/Theme/theme.ts';
 import VehicleListMobile from './VehicleListMobile.tsx';
 import VehicleListTablet from './VehicleListTablet.tsx';
 
@@ -135,7 +135,7 @@ const VehicleList: React.FC<VehicleListProps> = ({ vehicles, totalMiles, totalCo
             </TableHead>
             <TableBody>
               {vehicles.map((vehicle) => (
-                <TableRow key={vehicle.vin}>
+                <TableRow key={vehicle.vin} hover={false}>
                   <TableCell>{vehicle.licensePlate}</TableCell>
                   <TableCell>{vehicle.vin}</TableCell>
                   <TableCell>{vehicle.make}</TableCell>
@@ -148,17 +148,14 @@ const VehicleList: React.FC<VehicleListProps> = ({ vehicles, totalMiles, totalCo
               ))}
             </TableBody>
             <TableFooter>
-              <TableRow sx={{ 
-                backgroundColor: COLORS.summaryBackground, 
-                '&:hover': { backgroundColor: COLORS.summaryBackground } 
-              }}>
-                <TableCell colSpan={6} align="right" sx={{ fontWeight: 700 }}>
+              <TableRow sx={{ backgroundColor: COLORS.summaryBackground }}>
+                <TableCell colSpan={6} align="right" sx={{ fontWeight: 700, fontSize: '1rem' }}>
                   Total:
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: 700 }}>
+                <TableCell align="right" sx={{ fontWeight: 700, fontSize: '1rem' }}>
                   {formatNumber(totalMiles)} mi
                 </TableCell>
-                <TableCell align="right" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
+                <TableCell align="right" sx={{ fontWeight: 700, fontSize: '1rem', color: theme.palette.primary.main }}>
                   {formatCurrency(totalCost)}
                 </TableCell>
               </TableRow>

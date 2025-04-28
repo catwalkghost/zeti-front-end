@@ -1,172 +1,132 @@
 import { createTheme, PaletteOptions } from '@mui/material/styles';
 
-/**
- * Date Range Constants
- * Fixed date range for Bob's Taxis billing period
- */
-export const FIXED_START_DATE = "2021-02-01T00:00:00Z";
-export const FIXED_END_DATE = "2021-02-28T23:59:00Z";
-
-/**
- * Company Information
- * Default company information for billing
- */
-export const DEFAULT_COMPANY_NAME = "Bob's Taxis";
-
-/**
- * Theme Colors
- * Color palette for the application
- */
+// App color palette
 export const COLORS = {
   // Background colors
-  background: '#F9FAFB',      // Very light gray - soft luxury feel
-  cardBackground: '#FFFFFF',  // Pure clean white
-  summaryBackground: '#F3F4F6', // Light gray for summary boxes
-  hoverBackground: '#F1F5F9', // Light gray for hover states
+  background: '#F9FAFB',      // Light gray background
+  cardBackground: '#FFFFFF',  // White cards
+  summaryBackground: '#F3F4F6', // Light gray for summary sections
+  hoverBackground: '#F1F5F9', // Subtle hover effect
   
   // Text colors
-  textPrimary: '#111827',     // Primary text color (dark gray)
-  textSecondary: '#6B7280',   // Secondary text color (medium gray)
-  textDisabled: '#9CA3AF',    // Disabled/caption text (light gray)
+  textPrimary: '#111827',     // Nearly black for main text
+  textSecondary: '#6B7280',   // Medium gray for less important text
+  textDisabled: '#9CA3AF',    // Light gray for disabled text
   
-  // Accent colors
-  accent: '#D4AF37',          // Primary accent color (gold)
-  accentDark: '#C49C26',      // Darker accent for hover states
+  // Brand colors
+  accent: '#D4AF37',          // Gold accent (primary brand color)
+  accentDark: '#C49C26',      // Darker gold for hover states
   
   // UI elements
-  divider: '#E5E7EB',         // Very light gray for gentle separation
-  iconColor: '#1F2937',       // Muted black for icons
+  divider: '#E5E7EB',         // Light gray dividers
+  iconColor: '#1F2937',       // Dark gray icons
   
   // State colors
-  error: '#DC2626',           // Error state color (red)
-  errorLight: '#FEF2F2',      // Light error background
-  errorBorder: '#FEE2E2',     // Error border color
-  success: '#059669',         // Success state color (green)
-  warning: '#D97706',         // Warning state color (amber)
+  error: '#DC2626',           // Red for errors
+  errorLight: '#FEF2F2',      // Light red background
+  errorBorder: '#FEE2E2',     // Red border
+  errorText: '#7F1D1D',       // Dark red text
+  success: '#059669',         // Green for success states
+  warning: '#D97706',         // Amber for warnings
 };
 
-/**
- * Layout Constants
- * General measurements for layout
- */
+// Layout constants
 export const LAYOUT = {
-  borderRadius: 8,            // Default border radius for components
-  buttonBorderRadius: 8,      // Button border radius
-  mainBorderRadius: 12,       // Main content wrapper border radius
+  borderRadius: 8,            // Default corner radius
+  buttonBorderRadius: 8,      // Button corners
+  mainBorderRadius: 12,       // Main containers
   spacing: {
-    xs: 2,                    // Extra small spacing (8px)
-    sm: 4,                    // Small spacing (16px)
-    md: 8,                    // Medium spacing (32px)
-    lg: 12,                   // Large spacing (48px)
-    xl: 16,                   // Extra large spacing (64px)
+    xs: 2,                    // 8px
+    sm: 4,                    // 16px
+    md: 8,                    // 32px
+    lg: 12,                   // 48px
+    xl: 16,                   // 64px
   },
-  boxShadow: '0 4px 20px rgba(0,0,0,0.05)', // Default box shadow
+  boxShadow: '0 4px 20px rgba(0,0,0,0.05)', // Subtle shadow
 };
 
-// Define breakpoints
-type BreakpointValues = {
-  xs: number;
-  sm: number;
-  md: number;
-  lg: number;
-  xl: number;
-};
-
-const BREAKPOINTS: { values: BreakpointValues } = {
+// MUI breakpoints
+const BREAKPOINTS = {
   values: {
-    xs: 0,
-    sm: 600,
-    md: 900,
-    lg: 1200,
-    xl: 1536,
+    xs: 0,     // Phone
+    sm: 600,   // Tablet
+    md: 900,   // Small laptop
+    lg: 1200,  // Desktop
+    xl: 1536,  // Large display
   },
 };
 
-// Color palette based on design specs
+// Theme palette configuration
 const palette: PaletteOptions = {
   primary: {
-    main: COLORS.accent, 
+    main: COLORS.accent,
     light: '#DFC158',
     dark: COLORS.accentDark,
     contrastText: '#FFFFFF',
   },
   secondary: {
-    main: COLORS.iconColor, // muted black as secondary
+    main: COLORS.iconColor,
     light: '#4B5563',
     dark: '#111827',
     contrastText: '#FFFFFF',
   },
   error: {
-    main: COLORS.error, // red-500
-    light: '#f87171', // red-400
-    dark: '#dc2626', // red-600
+    main: COLORS.error,
+    light: '#f87171',
+    dark: '#dc2626',
     contrastText: '#FFFFFF',
   },
   warning: {
-    main: COLORS.warning, // amber-500
-    light: '#fbbf24', // amber-400
-    dark: '#d97706', // amber-600
+    main: COLORS.warning,
+    light: '#fbbf24',
+    dark: '#d97706',
     contrastText: '#FFFFFF',
   },
   info: {
-    main: COLORS.accent, // gold for info as well
+    main: COLORS.accent,
     light: '#DFC158', 
     dark: COLORS.accentDark,
     contrastText: '#FFFFFF',
   },
   success: {
-    main: COLORS.success, // emerald-500
-    light: '#34d399', // emerald-400
-    dark: '#059669', // emerald-600
+    main: COLORS.success,
+    light: '#34d399',
+    dark: '#059669',
     contrastText: '#FFFFFF',
   },
   text: {
-    primary: COLORS.textPrimary, // charcoal black
-    secondary: COLORS.textSecondary, // gray-500
+    primary: COLORS.textPrimary,
+    secondary: COLORS.textSecondary,
     disabled: COLORS.textDisabled,
   },
   background: {
-    default: COLORS.background, // very light gray
+    default: COLORS.background,
     paper: COLORS.cardBackground,
   },
-  divider: COLORS.divider, // gray-200
+  divider: COLORS.divider,
 };
 
-// Create theme
+// Create the MUI theme
 const theme = createTheme({
   breakpoints: BREAKPOINTS,
   palette,
   typography: {
     fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-    h1: {
-      fontWeight: 700,
-    },
-    h2: {
-      fontWeight: 700,
-    },
-    h3: {
-      fontWeight: 700,
-    },
-    h4: {
+    h1: { fontWeight: 700 },
+    h2: { fontWeight: 700 },
+    h3: { fontWeight: 700 },
+    h4: { 
       fontWeight: 700,
       fontSize: '1.75rem',
     },
-    h5: {
-      fontWeight: 600,
-    },
-    h6: {
-      fontWeight: 600,
-    },
-    subtitle1: {
-      fontWeight: 500,
-    },
+    h5: { fontWeight: 600 },
+    h6: { fontWeight: 600 },
+    subtitle1: { fontWeight: 500 },
     button: {
       textTransform: 'none',
       fontWeight: 600,
     },
-    body1: {
-      fontWeight: 400,
-    },
+    body1: { fontWeight: 400 },
     body2: {
       fontWeight: 400,
       color: COLORS.textSecondary,
@@ -255,7 +215,7 @@ const theme = createTheme({
         root: {
           padding: '16px',
           borderBottom: `1px solid ${COLORS.divider}`,
-          height: '60px', // Increased row height for elegance
+          height: '60px',
         },
         head: {
           fontWeight: 600,

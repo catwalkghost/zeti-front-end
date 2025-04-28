@@ -14,9 +14,8 @@ import {
   Theme
 } from '@mui/material';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
-import { COLORS } from '../../theme.ts';
+import { COLORS } from '../../Lib/Theme/theme.ts';
 
-// Component props including shared styling components
 type VehicleListTabletProps = {
   vehicles: {
     licensePlate: string;
@@ -93,11 +92,11 @@ const VehicleListTablet: React.FC<VehicleListTabletProps> = ({
           </TableHead>
           <TableBody>
             {vehicles.map((vehicle) => (
-              <TableRow key={vehicle.vin}>
+              <TableRow key={vehicle.vin} hover={false}>
                 <TabletTableCell>{vehicle.licensePlate}</TabletTableCell>
                 <VinTableCell>
                   <Tooltip title={vehicle.vin} placement="top">
-                    <Typography variant="inherit" component="span" sx={{ cursor: 'pointer' }}>
+                    <Typography variant="inherit" component="span">
                       {vehicle.vin}
                     </Typography>
                   </Tooltip>
@@ -111,17 +110,14 @@ const VehicleListTablet: React.FC<VehicleListTabletProps> = ({
             ))}
           </TableBody>
           <TableFooter>
-            <TableRow sx={{ 
-              backgroundColor: COLORS.summaryBackground, 
-              '&:hover': { backgroundColor: COLORS.summaryBackground } 
-            }}>
-              <TabletTableCell colSpan={5} align="right" sx={{ fontWeight: 700 }}>
+            <TableRow sx={{ backgroundColor: COLORS.summaryBackground }}>
+              <TabletTableCell colSpan={5} align="right" sx={{ fontWeight: 700, fontSize: '0.85rem' }}>
                 Total:
               </TabletTableCell>
-              <TabletTableCell align="right" sx={{ fontWeight: 700 }}>
+              <TabletTableCell align="right" sx={{ fontWeight: 700, fontSize: '0.85rem' }}>
                 {formatNumber(totalMiles)}
               </TabletTableCell>
-              <TabletTableCell align="right" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
+              <TabletTableCell align="right" sx={{ fontWeight: 700, fontSize: '0.85rem', color: theme.palette.primary.main }}>
                 {formatCurrency(totalCost)}
               </TabletTableCell>
             </TableRow>

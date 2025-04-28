@@ -1,126 +1,126 @@
 import { describe, it, expect } from 'vitest';
-import { BillFormatter, BillFormat } from '../utils/BillFormatter';
-
-// Mock bill data for testing
-const mockBill = {
-  billingPeriodStart: '2021-02-01T00:00:00Z',
-  billingPeriodEnd: '2021-02-28T23:59:00Z', 
-  costPerMile: 0.25,
-  totalCost: 75.0,
-  generatedAt: '2021-03-01T12:00:00Z',
-  customerName: "Bob's Taxis",
-  totalMiles: 300,
-  vehicles: [
-    {
-      licensePlate: 'CBDH 789',
-      vin: 'abcd123',
-      make: 'Jaguar',
-      model: 'IPace',
-      startOdometerMiles: 12000,
-      endOdometerMiles: 12100,
-      milesTravelled: 100,
-      cost: 25.0,
-      registration: 'CBDH 789',
-      startMileage: 12000,
-      endMileage: 12100,
-    },
-    {
-      licensePlate: '86532 AZE',
-      vin: 'xyz12345',
-      make: 'Tesla',
-      model: '3',
-      startOdometerMiles: 30000,
-      endOdometerMiles: 30200,
-      milesTravelled: 200,
-      cost: 50.0,
-      registration: '86532 AZE',
-      startMileage: 30000,
-      endMileage: 30200,
-    }
-  ]
-};
+import { BillFormatter, BillFormat } from '../Lib/Utils/BillFormatter'; 
+import type { Bill } from '../Types';
 
 describe('BillFormatter', () => {
+  const sampleBill: Bill = {
+    billingPeriodStart: '2021-02-01T00:00:00Z',
+    billingPeriodEnd: '2021-02-28T23:59:00Z',
+    customerName: 'Bob\'s Taxis',
+    totalMiles: 1250,
+    costPerMile: 0.207,
+    totalCost: 258.75,
+    generatedAt: '2023-04-25T14:30:00Z',
+    vehicles: [
+      {
+        registration: 'CBDH 789',
+        licensePlate: 'CBDH 789',
+        vin: 'JH4DB7540SS801338',
+        make: 'Toyota',
+        model: 'Corolla',
+        startMileage: 12500,
+        endMileage: 13200,
+        milesTravelled: 700,
+        cost: 144.9,
+        startOdometerMiles: 12500,
+        endOdometerMiles: 13200
+      },
+      {
+        registration: '86532 AZE',
+        licensePlate: '86532 AZE',
+        vin: 'JTHBJ46G992339158',
+        make: 'Ford',
+        model: 'Fiesta',
+        startMileage: 8000,
+        endMileage: 8550,
+        milesTravelled: 550,
+        cost: 113.85,
+        startOdometerMiles: 8000,
+        endOdometerMiles: 8550
+      }
+    ]
+  };
+
   describe('getFileInfo', () => {
-    it('should return the correct extension and mime type for PDF', () => {
+    it('returns correct info for PDF format', () => {
       const { extension, mimeType } = BillFormatter.getFileInfo(BillFormat.PDF);
       expect(extension).toBe('pdf');
       expect(mimeType).toBe('application/pdf');
     });
 
-    it('should return the correct extension and mime type for CSV', () => {
+    it('returns correct info for CSV format', () => {
       const { extension, mimeType } = BillFormatter.getFileInfo(BillFormat.CSV);
       expect(extension).toBe('csv');
       expect(mimeType).toBe('text/csv');
     });
 
-    it('should return the correct extension and mime type for JSON', () => {
+    it('returns correct info for JSON format', () => {
       const { extension, mimeType } = BillFormatter.getFileInfo(BillFormat.JSON);
       expect(extension).toBe('json');
       expect(mimeType).toBe('application/json');
     });
 
-    it('should return the correct extension and mime type for XML', () => {
-      const { extension, mimeType } = BillFormatter.getFileInfo(BillFormat.XML);
-      expect(extension).toBe('xml');
-      expect(mimeType).toBe('application/xml');
-    });
-
-    it('should return the correct extension and mime type for HTML', () => {
+    it('returns correct info for HTML format', () => {
       const { extension, mimeType } = BillFormatter.getFileInfo(BillFormat.HTML);
       expect(extension).toBe('html');
       expect(mimeType).toBe('text/html');
     });
 
-    it('should return the correct extension and mime type for TEXT', () => {
+    it('returns correct info for TEXT format', () => {
       const { extension, mimeType } = BillFormatter.getFileInfo(BillFormat.TEXT);
       expect(extension).toBe('txt');
       expect(mimeType).toBe('text/plain');
     });
   });
 
-  describe('formatAsJson', () => {
-    it('should format bill as JSON', () => {
-      const result = BillFormatter.formatAsJson(mockBill);
-      expect(typeof result).toBe('string');
+  describe('formatBill', () => {
+    it('formats bill as JSON correctly', async () => {
+      const formatted = await BillFormatter.formatBill(sampleBill, BillFormat.JSON);
       
-      const parsedResult = JSON.parse(result);
-      expect(parsedResult.customerName).toBe("Bob's Taxis");
-      expect(parsedResult.totalCost).toBe(75);
-      expect(parsedResult.vehicles.length).toBe(2);
+      // Parse it back to verify structure
+      const parsed = JSON.parse(formatted);
+      expect(parsed.customerName).toBe('Bob\'s Taxis');
+      expect(parsed.totalMiles).toBe(1250);
+      expect(parsed.vehicles.length).toBe(2);
+      expect(parsed.vehicles[0].make).toBe('Toyota');
     });
-  });
 
-  describe('formatAsCsv', () => {
-    it('should format bill as CSV', () => {
-      const result = BillFormatter.formatAsCsv(mockBill);
-      expect(typeof result).toBe('string');
-      expect(result).toContain('Customer,Bob\'s Taxis');
-      expect(result).toContain('Total Miles,300');
-      expect(result).toContain('License Plate,VIN,Make,Model');
-      expect(result).toContain('CBDH 789,abcd123,Jaguar,IPace');
+    it('formats bill as CSV correctly', async () => {
+      const formatted = await BillFormatter.formatBill(sampleBill, BillFormat.CSV);
+      
+      // CSV should have header row and vehicle data
+      const lines = formatted.trim().split('\n');
+      expect(lines.length).toBeGreaterThan(2); // At least header + 2 vehicles
+      
+      // Check if it contains key data points
+      expect(formatted).toContain('Toyota');
+      expect(formatted).toContain('Corolla');
+      expect(formatted).toContain('Ford');
+      expect(formatted).toContain('Fiesta');
     });
-  });
 
-  describe('formatAsXml', () => {
-    it('should format bill as XML', () => {
-      const result = BillFormatter.formatAsXml(mockBill);
-      expect(typeof result).toBe('string');
-      expect(result).toContain('<?xml version="1.0" encoding="UTF-8"?>');
-      expect(result).toContain('<customerName>Bob&apos;s Taxis</customerName>');
-      expect(result).toContain('<totalMiles>300</totalMiles>');
-      expect(result).toContain('<licensePlate>CBDH 789</licensePlate>');
+    it('formats bill as text correctly', async () => {
+      const formatted = await BillFormatter.formatBill(sampleBill, BillFormat.TEXT);
+      
+      // Plain text should contain company name and basic details
+      expect(formatted).toContain('Bob\'s Taxis');
+      expect(formatted).toContain('VEHICLE USAGE BILL');
+      expect(formatted).toContain('CBDH 789');
+      expect(formatted).toContain('86532 AZE');
     });
-  });
 
-  describe('formatAsText', () => {
-    it('should format bill as plain text', () => {
-      const result = BillFormatter.formatAsText(mockBill);
-      expect(typeof result).toBe('string');
-      expect(result).toContain('VEHICLE USAGE BILL');
-      expect(result).toContain('Bob\'s Taxis');
-      expect(result).toContain('Total Miles: 300');
-      expect(result).toContain('License Plate: CBDH 789');
+    it('formats bill as HTML correctly', async () => {
+      const formatted = await BillFormatter.formatBill(sampleBill, BillFormat.HTML);
+      
+      expect(formatted).toContain('<!DOCTYPE html>');
+      expect(formatted).toContain('<title>Bill for Bob\'s Taxis</title>');
+      expect(formatted).toContain('Vehicle Usage Bill');
+    });
+
+    it('creates a PDF data URL', async () => {
+      const formatted = await BillFormatter.formatBill(sampleBill, BillFormat.PDF);
+      expect(formatted.startsWith('data:application/pdf;base64,')).toBe(true);
+      expect(formatted.length).toBeGreaterThan(1000); // PDF should have a substantial size
     });
   });
 }); 

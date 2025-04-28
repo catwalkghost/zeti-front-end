@@ -1,22 +1,23 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
-// Mock window.URL.createObjectURL
-Object.defineProperty(window, 'URL', {
-  value: {
-    createObjectURL: vi.fn(() => 'mocked-object-url'),
-    revokeObjectURL: vi.fn(),
-  },
-});
+// Mocking the matchMedia function which might be needed for responsive components
+window.matchMedia = window.matchMedia || function() {
+  return {
+    matches: false,
+    addListener: function() {},
+    removeListener: function() {},
+    addEventListener: function() {},
+    removeEventListener: function() {},
+    dispatchEvent: function() {
+      return true;
+    }
+  };
+};
 
-// Mock the FileReader API
-global.FileReader = class {
-  onloadend: () => void = () => {};
-  readAsDataURL(_: Blob) {
-    setTimeout(() => {
-      // @ts-ignore - mocking result property
-      this.result = 'data:application/pdf;base64,mockedbase64data';
-      this.onloadend();
-    }, 0);
-  }
-} as unknown as typeof FileReader; 
+// Mock for the URL.createObjectURL function used in download functionality
+window.URL.createObjectURL = vi.fn(() => 'mock-url');
+window.URL.revokeObjectURL = vi.fn();
+
+// We might need to add more global mocks as the app grows
+// But for now this should cover the basic needs 
