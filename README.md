@@ -182,7 +182,6 @@ Tests are organized in the `src/tests` directory, with test files named after th
    * Missing odometer readings
    * Negative distance calculations (which shouldn't occur in reality)
    * HTTP errors when fetching from the API
-   * CORS issues handling through proxy
 
 3. **Performance Optimization**:
    * Caching is used to store API responses
@@ -197,7 +196,6 @@ Tests are organized in the `src/tests` directory, with test files named after th
 * Missing or incomplete vehicle data
 * Different odometer readings (start > end, which shouldn't occur in reality)
 * API failures and HTTP error responses
-* CORS issues when accessing the API from local development environment
 * Vehicles that don't belong to Bob's Taxis
 * Multiple vehicles with the same license plate but different VINs
 

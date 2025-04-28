@@ -1,15 +1,14 @@
 import { debounce } from "lodash-es";
 import { Bill } from "../../Types";
+import { API_BASE_URL, CORS_PROXY } from "../../Constants";
 
 class BillAPI {
-  /**
-   * Get the bill for a specific vehicle
-   * @param vehicleId - The ID of the vehicle to get the bill for
-   * @returns Promise with the bill data or null if not available
-   */
+
   static async getBill(vehicleId: string): Promise<Bill | null> {
     try {
-      const billData = await fetch(`/api/vehicle/${vehicleId}/bill`);
+      const apiUrl = `${API_BASE_URL}/api/vehicle/${vehicleId}/bill`;
+      const url = `${CORS_PROXY}${encodeURIComponent(apiUrl)}`;
+      const billData = await fetch(url);
       
       if (!billData.ok) {
         // For client-side code, it's more appropriate to log errors and handle gracefully

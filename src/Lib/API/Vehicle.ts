@@ -2,9 +2,7 @@ import { Vehicle, VehicleWithState } from "../../Types";
 import { debounce } from "lodash-es";
 import { API_BASE_URL, API_VEHICLES_ENDPOINT, API_VEHICLES_HISTORY_ENDPOINT, CORS_PROXY, BOBS_TAXIS_LICENSE_PLATES } from "../../Constants";
 
-/**
- * API service for fetching vehicle data
- */
+
 export class VehicleAPI {
   // Cache to prevent duplicate fetches
   private static vehicleCache = new Map<string, Vehicle[]>();
@@ -13,10 +11,9 @@ export class VehicleAPI {
   /**
    * Fetches all vehicles
    * API endpoint: GET /api/vehicles
-   * @returns Promise with array of vehicles
+   * @returns Promise with an array of vehicles
    */
   public static async getVehicles(): Promise<Vehicle[]> {
-    // Check cache first
     if (this.vehicleCache.has('all')) {
       return this.vehicleCache.get('all') as Vehicle[];
     }
@@ -38,23 +35,21 @@ export class VehicleAPI {
       });
       
       if (!response.ok) {
-        throw new Error(`API error (${response.status})`);
+        console.error(`API error (${response.status})`);
       }
       
       const allVehicles = await response.json() as Vehicle[];
       
-      // Filter for Bob's Taxis vehicles
-      const bobsTaxisVehicles = allVehicles.filter(vehicle => 
+      const bobsTaxisVehicles = allVehicles.filter(vehicle =>
         BOBS_TAXIS_LICENSE_PLATES.includes(vehicle.licensePlate)
       );
       
-      // Store in cache
       this.vehicleCache.set('all', bobsTaxisVehicles);
       
       return bobsTaxisVehicles;
     } catch (error) {
       console.error("Error in getVehicles:", error);
-      throw error;
+      throw new Error(`Failed to fetch vehicles: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -67,7 +62,6 @@ export class VehicleAPI {
   public static async getVehiclesHistory(
     asAtDateTime: string
   ): Promise<VehicleWithState[]> {
-    // Check cache first
     if (this.historyCache.has(asAtDateTime)) {
       return this.historyCache.get(asAtDateTime) as VehicleWithState[];
     }
@@ -85,23 +79,21 @@ export class VehicleAPI {
       });
       
       if (!response.ok) {
-        throw new Error(`API error (${response.status})`);
+        console.error(`API error (${response.status})`);
       }
       
       const allVehicles = await response.json() as VehicleWithState[];
       
-      // Filter for Bob's Taxis vehicles
-      const bobsTaxisVehicles = allVehicles.filter(vehicle => 
+      const bobsTaxisVehicles = allVehicles.filter(vehicle =>
         BOBS_TAXIS_LICENSE_PLATES.includes(vehicle.licensePlate)
       );
       
-      // Store in cache
       this.historyCache.set(asAtDateTime, bobsTaxisVehicles);
       
       return bobsTaxisVehicles;
     } catch (error) {
       console.error(`Error in getVehiclesHistory for ${asAtDateTime}:`, error);
-      throw error;
+      throw new Error(`Failed to fetch vehicle history: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -115,8 +107,8 @@ export class VehicleAPI {
     );
   }
 
-  // Debounced API calls to prevent excessive requests (500ms delay)
-  public static debouncedGetVehicles = debounce(VehicleAPI.getVehicles, 500);
-  public static debouncedGetVehiclesHistory = debounce(VehicleAPI.getVehiclesHistory, 500);
-  public static debouncedGetBobsTaxisVehicles = debounce(VehicleAPI.getBobsTaxisVehicles, 500);
+  // Debounced API calls to prevent excessive requests (300 ms delay)
+  public static debouncedGetVehicles = debounce(VehicleAPI.getVehicles, 300);
+  public static debouncedGetVehiclesHistory = debounce(VehicleAPI.getVehiclesHistory, 300);
+  public static debouncedGetBobsTaxisVehicles = debounce(VehicleAPI.getBobsTaxisVehicles, 300);
 } 
